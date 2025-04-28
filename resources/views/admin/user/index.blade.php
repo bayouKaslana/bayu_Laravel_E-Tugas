@@ -9,7 +9,7 @@
 <div class="card">
     <div class="card-header d-flex flex-wrap justify-content-center justify-content-xl-between">
         <div class="mb-1 mr-2">
-            <a href="" class="btn btn-sm btn-primary">
+            <a href="{{ route('userCreate' )}}" class="btn btn-sm btn-primary">
                 <i class="fas fa-plus mr-2"></i>
                 Tambah Data
             </a>
@@ -41,21 +41,49 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="text-center">1</td>
-                        <td>Tiger Nixon</td>
-                        <td>System Architect</td>
-                        <td class="text-center"><span class="badge badge-dark badge-pill">Admin</span></td>
-                        <td class="text-center"><span class="badge badge-danger badge-pill">Belum Ditugaskan</span></td>
-                        <td class="text-center">
-                            <a href="#" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a href="#" class="btn btn-danger btn-sm">
+                   @foreach ($user as $item)
+                       <tr>
+                            <td class="text-center">{{ $loop->iteration}}</td>
+                            <td>{{ $item->nama}}</td>
+                            <td class="text-center">
+                                <span class="badge badge-primary">
+                                    {{ $item->email}}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                @if ($item->jabatan == 'Admin')
+                                    <span class="badge badge-dark">
+                                        {{ $item->jabatan}}
+                                    </span>
+                                @else
+                                    <span class="badge badge-info">
+                                        {{ $item->jabatan}}
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                @if ($item->is_tugas == false)
+                                    <span class="badge badge-danger">
+                                        Belum Ditugaskan
+                                    </span>
+                                @else
+                                    <span class="badge badge-success">
+                                        Sudah Ditugaskan
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ route('userEdit', $item->id) }}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <!-- Tombol untuk membuka modal -->
+                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#exampleModal{{ $item->id }}">
                                 <i class="fas fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
+                                </button>
+                                @include('admin/user/modal')
+                            </td>
+                       </tr>
+                   @endforeach
                 </tbody>
             </table>
         </div>
