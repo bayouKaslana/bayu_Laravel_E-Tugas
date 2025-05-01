@@ -6,19 +6,28 @@ use App\Models\User;
 use App\Models\Tugas;
 use App\Exports\TugasExport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class TugasController extends Controller
 {
     public function index(){
-        $data = array(
-            'title'          => 'Data Tugas',
-            'menuAdminTugas' => 'active',
-            'tugas'          => Tugas::with('user')->get(),
-            'user'           => User::get(),
-        );
-        return view ('admin/tugas/index', $data);
+        $user = Auth::user();
+        if ($user->jabatan=='Admin') {
+            $data = array(
+                'title'          => 'Data Tugas',
+                'menuAdminTugas' => 'active',
+                'tugas'          => Tugas::with('user')->get(),
+            );
+            return view ('admin/tugas/index', $data);
+        } else {
+            $data = array(
+                'title'             => 'Data Tugas',
+                'menuKaryawanTugas' => 'active',
+            );
+            return view ('karyawan/tugas/index', $data);
+        }
     }
 
     public function create(){
