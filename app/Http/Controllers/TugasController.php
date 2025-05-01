@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Tugas;
+use App\Exports\TugasExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TugasController extends Controller
 {
@@ -91,5 +94,22 @@ class TugasController extends Controller
         $user->save();
 
         return redirect()->route('tugas')->with('success','Data Berhasil Di Hapus');
+    }
+
+    public function excel(){
+        $filename = now()->format('d-m-Y_H.i.s');
+        return Excel::download(new TugasExport, 'DataTugas_'.$filename.'.xlsx');
+    }
+
+    public function pdf(){
+        $filename = now()->format('d-m-Y_H.i.s');
+        $data = array(
+            'tugas'     => Tugas::with('user')->get(),
+            'tanggal'   => now()->format('d-m-Y'),
+            'jam'       => now()->format('H.i.s'),
+        );
+
+        $pdf = Pdf::loadView('admin/tugas/pdf', $data);
+        return $pdf->setPaper('a4', 'landscape')->stream('DataTugas_'.$filename.'.pdf');
     }
 }
